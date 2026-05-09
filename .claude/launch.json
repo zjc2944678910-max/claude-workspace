@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "paopao-tang",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server.js"],
+      "port": 3000,
+      "autoPort": true,
+      "cwd": "scratch/paopao-tang"
+    }
+  ]
+}
