@@ -32,7 +32,7 @@ check_path "MathorCup-D" "/Users/zhangjincheng/Documents/GitHub/codex-workspace/
 
 # ── 3. Check PROJECTS.md lists all active projects ───────────────────────────
 for proj in "${ACTIVE_PROJECTS[@]}"; do
-  if rg -q "$proj" PROJECTS.md 2>/dev/null; then
+  if grep -q "$proj" PROJECTS.md 2>/dev/null; then
     CONFIRMED+=("PROJECTS.md contains: $proj")
   else
     DRIFT+=("PROJECTS.md missing: $proj")
@@ -41,7 +41,7 @@ done
 
 # ── 4. Check registry/projects.md lists all active projects ──────────────────
 for proj in "${ACTIVE_PROJECTS[@]}"; do
-  if rg -q "$proj" registry/projects.md 2>/dev/null; then
+  if grep -q "$proj" registry/projects.md 2>/dev/null; then
     CONFIRMED+=("registry/projects.md contains: $proj")
   else
     DRIFT+=("registry/projects.md missing: $proj")
@@ -61,7 +61,7 @@ done
 ACTIVE_DOCS=(README.md PROJECTS.md CLAUDE.md registry/projects.md registry/tools.md registry/paths.md context/README.md)
 for doc in "${ACTIVE_DOCS[@]}"; do
   if [ -f "$doc" ]; then
-    matches=$(rg -ic 'qigate|QiGate' "$doc" 2>/dev/null || true)
+    matches=$(grep -ic 'qigate|QiGate' "$doc" 2>/dev/null || true)
     if [ "$matches" -gt 0 ] 2>/dev/null; then
       STALE+=("stale retired-project reference in $doc ($matches occurrence(s))")
     fi
@@ -72,7 +72,7 @@ done
 for slug in "${ACTIVE_SLUGS[@]}"; do
   f="context/projects/${slug}.md"
   if [ -f "$f" ]; then
-    matches=$(rg -ic 'qigate|QiGate' "$f" 2>/dev/null || true)
+    matches=$(grep -ic 'qigate|QiGate' "$f" 2>/dev/null || true)
     if [ "$matches" -gt 0 ] 2>/dev/null; then
       STALE+=("stale retired-project reference in $f ($matches occurrence(s))")
     fi
