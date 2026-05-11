@@ -4,7 +4,6 @@
 
 - `rg`: fast file and text search
 - `git status`: inspect repository state before editing
-- `pnpm dev`: common workspace dev command for `qigate`
 - `ssh oc-nas`: OpenClaw live host entry for read-only audits
 
 ## Claude Workspace Shortcuts

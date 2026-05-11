@@ -2,6 +2,8 @@
 
 This file is the detailed registry of real repositories and working surfaces that Claude sessions may need.
 
+Active project set: **OpenClaw**, **NAS Platform**, **Telegram Dual Relay**, **MathorCup-D**.
+
 ## OpenClaw
 
 - Mainline repository: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/products/openclaw/nas-openclaw-v22`
@@ -13,22 +15,6 @@ This file is the detailed registry of real repositories and working surfaces tha
   - product fix -> mainline repo
   - live audit or deployment history -> ops surface
   - legacy comparison -> migration reference
-
-## QiGate
-
-- Repository: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/products/qigate`
-- Summary: multi-tenant property access SaaS workspace
-- Primary surfaces:
-  - `apps/web`
-  - `apps/api`
-  - `apps/miniapp`
-  - `services/gateway`
-  - `packages/domain`
-  - `packages/ui`
-- Quick start:
-  - `corepack prepare pnpm@10.11.0 --activate`
-  - `pnpm install`
-  - `pnpm dev`
 
 ## NAS Platform
 
@@ -42,7 +28,19 @@ This file is the detailed registry of real repositories and working surfaces tha
   - `vps-nginx/`
   - `vps-ssh/`
 
-## MathorCup
+## Telegram Dual Relay
+
+- Repository: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/infrastructure/telegram-dual-relay`
+- Summary: Telegram message relay service for dual-bot forwarding
+- Primary surfaces:
+  - `src/`
+  - `scripts/`
+  - `systemd/`
+  - `tests/`
+  - `docs/`
+
+## MathorCup-D
 
 - Product-style archive repo: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/products/MathorCup_D_repo`
 - Research workspace: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/research/mathorcup_D`
+- Summary: MathorCup competition Problem D — data analysis and modeling

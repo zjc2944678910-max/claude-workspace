@@ -8,14 +8,24 @@ Use this file as the short path map for Claude Code sessions started from `claud
 - Codex workspace root: `/Users/zhangjincheng/Documents/GitHub/codex-workspace`
 - Legacy local root: `/Users/zhangjincheng/Documents/GitHub/-`
 
-## Primary Projects
+## Active Projects
 
-- OpenClaw mainline: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/products/openclaw/nas-openclaw-v22`
-- OpenClaw migration reference: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/migrations/openclaw-mac-migration`
-- OpenClaw ops surface: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/ops/projects/openclaw`
-- OpenClaw sidecar state: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/state/project-data/openclaw`
-- QiGate workspace: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/products/qigate`
-- NAS platform repo: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/infrastructure/nas-platform`
+| Project | Path |
+|---|---|
+| **OpenClaw** | `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/products/openclaw/nas-openclaw-v22` |
+| **NAS Platform** | `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/infrastructure/nas-platform` |
+| **Telegram Dual Relay** | `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/infrastructure/telegram-dual-relay` |
+| **MathorCup-D** | `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/products/MathorCup_D_repo` |
+
+### OpenClaw additional surfaces
+
+- Migration reference: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/migrations/openclaw-mac-migration`
+- Ops surface: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/ops/projects/openclaw`
+- Sidecar state: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/state/project-data/openclaw`
+
+### MathorCup-D additional surfaces
+
+- Research workspace: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/research/mathorcup_D`
 
 ## Routing
 

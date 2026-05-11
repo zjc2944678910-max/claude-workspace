@@ -1,26 +1,36 @@
 # Project Note Template
 
-## Identity
+Use this compact "project-card" shape for every active project note under `context/projects/`.
 
-- Project name:
-- Mainline repository:
-- Related ops path:
-- Related state path:
+## Required Sections
 
-## Working Modes
+```markdown
+# {Project Name} — Project Card
 
-- Product code changes:
-- Ops and deployment work:
-- Migration or reference work:
+| Field | Value |
+|---|---|
+| **Repository** | absolute path |
+| **Summary** | one-line description |
+| **Live host** | alias or `—` |
 
-## Confirmed Facts
+## Key Surfaces
 
-- 
+- `path/`: purpose
+- ...
 
-## Open Questions
+## Working Guidance
 
-- 
+- When to use which surface.
 
 ## Safety Boundary
 
-- 
+- Read-only defaults, escalation rules.
+```
+
+## Rules
+
+- Keep it to one screen.
+- Use absolute paths.
+- No secrets, no raw logs.
+- Update in place; do not create near-duplicates.
+- When a project is retired, move this file to `archive/old-context/`.

@@ -21,7 +21,7 @@
 ### 2. Security-guidance — 安全检查
 - **作用**: 编辑文件时自动检测安全问题（命令注入、XSS、不安全模式）
 - **触发方式**: 自动，在 Edit/Write/MultiEdit 操作前运行检查
-- **使用场景**: 编辑 OpenClaw/QiGate 等 web 应用代码时自动生效
+- **使用场景**: 编辑 OpenClaw、Telegram Dual Relay 等活跃项目代码时自动生效
 - **不需要手动操作**，发现安全问题会自动弹出警告
 
 ### 3. Hookify — 事件驱动规则
@@ -43,7 +43,7 @@
 - **命令**:
   - `/commit-commands:commit` — 分析 diff，自动提交
   - `/commit-commands:commit-push-pr` — 一键 commit + push + 创建 PR
-- **使用场景**: 在 git 仓库目录中（OpenClaw、QiGate、NAS platform）使用
+- **使用场景**: 在 git 仓库目录中（OpenClaw、Telegram Dual Relay、MathorCup-D、NAS platform）使用
 - **注意**: 需要在有 `.git` 的目录中使用
 
 ---
@@ -114,7 +114,7 @@
   - `graphify path "A" "B"` — 查找两个概念间的路径
   - `graphify explain "概念"` — 解释某个概念
 - **输出**: `graphify-out/` 目录下的 HTML 图、Markdown 报告
-- **使用场景**: 理解 OpenClaw/QiGate 大型代码库结构时
+- **使用场景**: 理解 OpenClaw、Telegram Dual Relay、MathorCup-D 等活跃代码库结构时
 - **特点**: 代码本地解析，不发 API；修改代码后运行 `graphify update .` 保持图谱最新
 
 ---

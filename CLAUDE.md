@@ -3,6 +3,9 @@
 @registry/paths.md
 @registry/hosts.md
 @context/projects/openclaw.md
+@context/projects/nas-platform.md
+@context/projects/telegram-dual-relay.md
+@context/projects/mathorcup-d.md
 @context/architecture/workspace-model.md
 
 # Claude Workspace

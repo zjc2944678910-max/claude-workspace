@@ -1,12 +1,12 @@
-# NAS Platform Project Note
+# NAS Platform — Project Card
 
-## Identity
+| Field | Value |
+|---|---|
+| **Repository** | `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/infrastructure/nas-platform` |
+| **Summary** | NAS and VPS infrastructure: app stacks, infra services, env files, deployment scripts |
+| **Live host** | `oc-nas` (NAS) / VPS via `vps-ssh/` |
 
-- Project name: NAS Platform
-- Repository: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/infrastructure/nas-platform`
-- Summary: NAS and VPS infrastructure repo for app stacks, infra services, generated env files, and deployment scripts
-
-## Main Surfaces
+## Key Surfaces
 
 - `apps-*`: application compose stacks
 - `infra-*`: platform service compose stacks
@@ -17,6 +17,11 @@
 
 ## Working Guidance
 
-- Infra changes often start in the matching `apps-*` or `infra-*` directory.
-- Deployment behavior usually involves `scripts/`.
-- Public routing and TLS behavior usually lives in `vps-nginx/`.
+- Infra changes → matching `apps-*` or `infra-*` directory.
+- Deployment → `scripts/`.
+- Public routing and TLS → `vps-nginx/`.
+
+## Safety Boundary
+
+- Infrastructure changes can affect all hosted services.
+- Confirm scope before editing compose stacks or nginx configs.

@@ -26,4 +26,10 @@ Store durable context here when it should outlive a single Claude session.
 - update existing notes instead of creating near-duplicates
 - move stale notes into `archive/` when a newer source replaces them
 
-Use `context/templates/project-note.md` when adding a new project note.
+## Project Notes
+
+Active project notes live in `context/projects/`. Each must use the **project-card** shape defined in `context/templates/project-note.md`.
+
+Active project set: **OpenClaw**, **NAS Platform**, **Telegram Dual Relay**, **MathorCup-D**.
+
+Retired project notes go to `archive/old-context/`. Do not keep stale project notes in `context/projects/`.

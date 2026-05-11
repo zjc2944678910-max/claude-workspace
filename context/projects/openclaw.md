@@ -1,30 +1,27 @@
-# OpenClaw Project Note
+# OpenClaw — Project Card
 
-## Identity
+| Field | Value |
+|---|---|
+| **Repository** | `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/products/openclaw/nas-openclaw-v22` |
+| **Summary** | OpenClaw NAS application (mainline product) |
+| **Live host** | `oc-nas` |
 
-- Project name: OpenClaw
-- Mainline repository: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/products/openclaw/nas-openclaw-v22`
-- Migration reference: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/migrations/openclaw-mac-migration`
-- Operator surface: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/ops/projects/openclaw`
-- Sidecar state: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/state/project-data/openclaw`
-- Live host alias: `oc-nas`
+## Key Surfaces
 
-## Working Modes
+- **Mainline repo**: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/products/openclaw/nas-openclaw-v22` — product code changes
+- **Migration reference**: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/migrations/openclaw-mac-migration` — legacy comparison, recovery
+- **Ops surface**: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/ops/projects/openclaw` — deployment history, rollback bundles, audit evidence
+- **Sidecar state**: `/Users/zhangjincheng/Documents/GitHub/codex-workspace/state/project-data/openclaw` — non-source project data
 
-- Product code changes: use the mainline repository
-- Migration comparison or historical reconstruction: use the migration reference
-- Operator docs, deployment history, evidence, rollback bundles: use the ops surface
-- Non-source project data: use the sidecar state path
+## Working Guidance
 
-## Default Safety Boundary
+- Feature or bug fix → mainline repo.
+- Live audit or deployment ledger → ops surface.
+- Old/new layout comparison → migration reference.
+- Project-specific local state → sidecar state.
 
-- Treat NAS, live, production, slow-reply, timeout, and performance-incident requests as read-only by default.
+## Safety Boundary
+
+- NAS, live, production, slow-reply, timeout, and performance tasks are **read-only by default**.
 - Keep confirmed evidence, hypotheses, and recommendations separate.
-- Do not perform repair actions unless the user explicitly authorizes a repair stage.
-
-## Common Route Choice
-
-- Feature or bug fix in the application: mainline repository
-- Live audit, deployment ledger, mirrors, rollback review: ops surface
-- Comparing old and new layouts or recovering lost context: migration reference
-- Reviewing project-specific local state: sidecar state
+- No repair actions without explicit user approval.
