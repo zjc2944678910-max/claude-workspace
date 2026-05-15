@@ -11,5 +11,7 @@ Move items as follows:
 - reusable procedures -> `context/runbooks/`
 - workflow or architecture decisions -> `DECISIONS.md`
 - day-specific notes -> `DAILY.md`
+- cross-tool transfer summaries -> `handoffs/` only when another session or tool needs them
 
 Do not copy raw logs or large temporary output into durable notes.
+If raw material remains in `inbox/` or disposable output remains in `scratch/`, leave it there or create a cleanup manifest; do not delete it as part of memory promotion.

@@ -12,4 +12,5 @@ Create a handoff summary with:
 - residual risks
 - next recommended action
 
-Store durable handoffs under `handoffs/`.
+Store durable handoffs under `handoffs/` only when another Claude, Codex, or future session needs the summary.
+Do not use handoffs as a substitute for durable project facts; promote stable knowledge into `context/` or `DECISIONS.md`.

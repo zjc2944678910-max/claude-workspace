@@ -14,6 +14,10 @@
 - `.claude/commands/inspect-project.md`: project routing command
 - `.claude/commands/update-memory.md`: note-promotion command
 - `.claude/commands/handoff-summary.md`: summary command
+- `.claude/commands/session-closeout.md`: end-of-session memory, handoff, and cleanup checklist
+- `.claude/commands/cleanup-manifest.md`: conservative cleanup planning command
+- `tools/workspace-health.sh`: read-only project-index consistency check
+- `tools/workspace-inventory.sh`: read-only inventory for workspace and global Claude state
 
 ## Note
 

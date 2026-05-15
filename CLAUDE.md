@@ -17,12 +17,15 @@ This root is a Claude Code coordination workspace.
 - Use this directory for planning, routing, durable notes, and handoffs.
 - Do not treat this directory as a product repository.
 - Before changing product code, switch into the real project path from `PROJECTS.md` or `registry/projects.md`.
+- Treat `~/.claude` as global Claude Code state, not project knowledge. Global settings, hooks, plugins, and historical sessions may affect both desktop and CLI new sessions.
+- Codex is optional from Claude Code. Use Codex delegation only when the user explicitly asks for Codex; otherwise Claude Code should do local implementation itself.
 
 ## Startup Checklist
 
 - Confirm which project or ops surface the task belongs to.
 - Resolve the real working path before editing files.
 - Read additional project notes from `context/projects/` only when the task needs them.
+- For behavior or routing questions, check both this workspace and relevant global Claude Code config under `~/.claude`.
 
 ## Verification First
 
@@ -69,6 +72,8 @@ This root is a Claude Code coordination workspace.
 - Generated inventories, bulk indexes, one-off cleanup scripts, and temporary audits do not belong in the workspace root.
 - Put transient generated artifacts under `scratch/` and move only truly reusable summaries into `context/` or `handoffs/`.
 - Do not rely on auto memory alone for important project knowledge.
+- Before ending a substantial session, run a closeout pass: decide what belongs in `DAILY.md`, what should be promoted into `context/` or `DECISIONS.md`, whether a handoff is needed, and whether `scratch/` or `inbox/` needs a cleanup manifest.
+- Cleanup is conservative by default. Produce a manifest with keep, archive, delete-candidate, and ask buckets before removing or moving user-visible material.
 
 ## Safety
 
@@ -103,6 +108,10 @@ This root is a Claude Code coordination workspace.
 
 - Use `grounded-answer` when the task is prone to hallucination, especially for paths, runtime state, internal behavior, permissions, or root-cause questions.
 - Use `choose-execution-surface` before proposing commands that may depend on the Cowork shell, the host Mac, or connected workspace reachability.
+- Use `workspace-health` after project-index changes.
+- Use `session-closeout` before ending a substantial session.
+- Use `workspace-inventory` or `bash tools/workspace-inventory.sh` for a read-only view of workspace size, temporary material, and global Claude session volume.
+- Use `cleanup-manifest` before deleting, archiving, or moving ambiguous temporary material.
 
 ## graphify
 
