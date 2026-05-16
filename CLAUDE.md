@@ -1,124 +1,43 @@
 @PROJECTS.md
-@registry/projects.md
 @registry/paths.md
 @registry/hosts.md
-@context/projects/openclaw.md
-@context/projects/nas-platform.md
-@context/projects/telegram-dual-relay.md
-@context/projects/mathorcup-d.md
-@context/architecture/workspace-model.md
 
 # Claude Workspace
 
-This root is a Claude Code coordination workspace.
+Coordination root. Not a product repo. Real code lives in paths from `PROJECTS.md`.
 
-## Role
+## Core Rules
 
-- Use this directory for planning, routing, durable notes, and handoffs.
-- Do not treat this directory as a product repository.
-- Before changing product code, switch into the real project path from `PROJECTS.md` or `registry/projects.md`.
-- Treat `~/.claude` as global Claude Code state, not project knowledge. Global settings, hooks, plugins, and historical sessions may affect both desktop and CLI new sessions.
-- Codex is optional from Claude Code. Use Codex delegation only when the user explicitly asks for Codex; otherwise Claude Code should do local implementation itself.
+- Resolve project path from `PROJECTS.md` or `registry/project-registry.json` before editing product code.
+- Read `context/projects/<slug>.md` only when the task needs that project's context.
+- Verify before claiming: paths, runtime state, root causes, internal behavior. Say `不确定` if unverified.
+- Separate confirmed facts / inferences / open questions. Never present guesses as facts.
+- Risk levels enforced by `tools/workspace-guard.py` hook. See `.claude/rules/15-risk-levels.md`.
+- Codex delegation only when user explicitly asks. Otherwise Claude implements directly.
 
-## Startup Checklist
+## Environment Boundaries
 
-- Confirm which project or ops surface the task belongs to.
-- Resolve the real working path before editing files.
-- Read additional project notes from `context/projects/` only when the task needs them.
-- For behavior or routing questions, check both this workspace and relevant global Claude Code config under `~/.claude`.
+- Distinguish: Cowork shell / host macOS / connected workspace.
+- Host-only paths (macOS temp, GUI state, Finder) unreachable from shell unless verified.
+- File-centric tasks → move into workspace. GUI tasks → computer-use.
 
-## Verification First
+## Memory & Closeout
 
-- Do not invent file paths, storage locations, internal tool behavior, system implementation details, current runtime state, root causes, timelines, or ownership facts.
-- If a path, file, host, connector state, skill registration location, install location, process state, config state, or permission state has not been directly observed, say it is unconfirmed.
-- For Cowork, skills, connectors, `save_skill`, slash commands, Claude internal features, and hidden platform behavior, treat the implementation as opaque unless it is visible in real files, logs, command output, or official docs.
-- When the user asks what happened, why something happened, where something is stored, whether something is enabled, or how an internal feature works, verify first from the real workspace, command output, logs, or cited documentation before answering.
-- If verification is not possible, explicitly say `不确定` and give the smallest next verification step instead of guessing.
-- Do not turn plausible conventions, naming patterns, or earlier assistant text into facts.
-- Do not cite a previous assistant answer as evidence unless it is independently re-verified.
+- Durable facts → `context/`. Daily notes → `DAILY.md`. Decisions → `DECISIONS.md`.
+- Disposable → `scratch/`. Imports → `inbox/`.
+- Session closeout: promote durable notes, create handoff if needed, cleanup manifest before deleting.
 
-## Claim Discipline
+## Worker Delegation
 
-- Separate these classes of claims:
-  - confirmed facts
-  - reasonable inferences
-  - open questions
-- Never collapse a likely explanation into a confirmed root cause.
-- Do not infer current state from stale files, old screenshots, or memory alone.
-- If one symptom has multiple possible causes, list the alternatives instead of choosing one without evidence.
-- Prefer "根据当前证据只能确认到这里" over a complete but speculative explanation.
+- Use `worker-delegate` MCP for bounded implementation and file reading/summarization.
+- Tiers: light → default → strong → complex → hardest (gpt-5.5).
+- Use `read_and_summarize` to offload large file reads to worker (saves Claude context).
+- See `context/agent-roles.md` for role definitions, `context/daily-workflow.md` for decision tree.
 
-## Execution Environment Boundaries
+## Commands
 
-- Distinguish clearly between:
-  - the Cowork shell or VM execution environment
-  - the user's real macOS host
-  - the currently connected workspace folders
-- Do not assume a path visible in a screenshot or typed by the user is reachable from the Cowork shell.
-- Treat macOS system-temporary paths, desktop-only UI state, mounted volumes, and host-only app state as host-side until verified.
-- If a task targets a host-only path or a GUI-only app, do not claim that the shell can reach it without proof.
-- If the user wants a command run on the real Mac host, say that it requires computer-use interaction or that the file should be moved into a connected workspace first.
-- Prefer moving files into a connected workspace when the task is file-centric and does not require GUI interaction.
-- Prefer computer-use when the task depends on host apps, host-only paths, browser state, Finder state, or Terminal on the real machine.
-- Prefer the Cowork shell only when the target files and tools are actually present in the connected workspace or verified runtime.
-
-## Memory Discipline
-
-- Stable facts belong in `context/`.
-- Day-level notes belong in `DAILY.md`.
-- Lasting decisions belong in `DECISIONS.md`.
-- Imported material starts in `inbox/`.
-- Disposable work belongs in `scratch/`.
-- Generated inventories, bulk indexes, one-off cleanup scripts, and temporary audits do not belong in the workspace root.
-- Put transient generated artifacts under `scratch/` and move only truly reusable summaries into `context/` or `handoffs/`.
-- Do not rely on auto memory alone for important project knowledge.
-- Before ending a substantial session, run a closeout pass: decide what belongs in `DAILY.md`, what should be promoted into `context/` or `DECISIONS.md`, whether a handoff is needed, and whether `scratch/` or `inbox/` needs a cleanup manifest.
-- Cleanup is conservative by default. Produce a manifest with keep, archive, delete-candidate, and ask buckets before removing or moving user-visible material.
-
-## Safety
-
-- For OpenClaw, NAS, live, production, slow-reply, timeout, or performance tasks, default to read-only audit mode.
-- Keep confirmed facts, hypotheses, and next actions clearly separated.
-- Do not restart services, write production config, or perform live repairs without explicit user approval.
-
-## Response Discipline
-
-- For questions about paths, installs, registration locations, hidden state, runtime state, internal behavior, or system behavior, separate the answer into:
-  - confirmed facts
-  - unconfirmed or inferred items
-  - next verification step
-- If earlier conversation content may be wrong, correct it plainly instead of building on it.
-- Prefer "I have not verified that yet" over a specific but unverified answer.
-- When a claim depends on evidence, point to the evidence source briefly:
-  - local file path
-  - command output
-  - log line
-  - official doc
-- When the answer depends on environment reachability, state which environment you are referring to:
-  - Cowork shell / VM
-  - host macOS
-  - connected workspace
-
-## Handoffs
-
-- Put reusable summaries in `handoffs/`.
-- Keep local file references as absolute paths.
-
-## Useful Commands
-
-- Use `grounded-answer` when the task is prone to hallucination, especially for paths, runtime state, internal behavior, permissions, or root-cause questions.
-- Use `choose-execution-surface` before proposing commands that may depend on the Cowork shell, the host Mac, or connected workspace reachability.
-- Use `workspace-health` after project-index changes.
-- Use `session-closeout` before ending a substantial session.
-- Use `workspace-inventory` or `bash tools/workspace-inventory.sh` for a read-only view of workspace size, temporary material, and global Claude session volume.
-- Use `cleanup-manifest` before deleting, archiving, or moving ambiguous temporary material.
+`grounded-answer` · `choose-execution-surface` · `workspace-health` · `session-closeout` · `workspace-inventory` · `cleanup-manifest` · `delegate-task` · `long-task`
 
 ## graphify
 
-This project has a graphify knowledge graph at graphify-out/.
-
-Rules:
-- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
-- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
-- For cross-module "how does X relate to Y" questions, prefer `graphify query "<question>"`, `graphify path "<A>" "<B>"`, or `graphify explain "<concept>"` over grep — these traverse the graph's EXTRACTED + INFERRED edges instead of scanning files
-- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
+Knowledge graph at `graphify-out/`. Use `graphify query/path/explain` for cross-module questions before grep. Run `graphify update .` after code changes.

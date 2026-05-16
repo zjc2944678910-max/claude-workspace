@@ -195,6 +195,136 @@ async def list_worker_models() -> str:
 
 
 @mcp.tool()
+async def read_and_summarize(
+    files: str,
+    question: str = "",
+    tier: str = "default",
+    model: str = "",
+    max_tokens: int = 4096,
+) -> str:
+    """Worker reads files and returns a focused summary. Saves Claude's context window.
+
+    Instead of Claude reading large files directly (expensive input tokens),
+    the worker reads and compresses the information into a short summary.
+
+    Args:
+        files: File paths to read, one per line. Supports line ranges: "path:10-50".
+        question: What to focus on. E.g. "find error handling patterns" or "summarize the API".
+                  If empty, returns a general structural summary.
+        tier: Model tier. Use "light" for simple summaries, "default" for analysis.
+        model: Override tier with specific model ID.
+        max_tokens: Max response tokens for the summary.
+
+    Returns:
+        Compressed summary of file contents focused on the question.
+    """
+    cfg = load_config()
+
+    if not model:
+        model = cfg["tiers"].get(tier, cfg["tiers"]["default"])
+
+    relay_name = cfg["model_routing"].get(model)
+    if not relay_name:
+        return f"Error: model '{model}' not found in routing."
+
+    relay = get_relay(relay_name, cfg)
+    if not relay["api_key"]:
+        return f"Error: API key not set for relay '{relay_name}'."
+
+    # Read files
+    file_contents = []
+    for line in files.strip().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        # Parse optional line range: path:start-end
+        path_str = line
+        line_range = None
+        if ":" in line and not line.startswith("/"):
+            pass  # could be Windows path, skip
+        elif ":" in line:
+            parts = line.rsplit(":", 1)
+            if parts[1].replace("-", "").isdigit():
+                path_str = parts[0]
+                line_range = parts[1]
+
+        path = Path(path_str).expanduser()
+        if not path.exists():
+            file_contents.append(f"## {path_str}\n[FILE NOT FOUND]")
+            continue
+        if not path.is_file():
+            file_contents.append(f"## {path_str}\n[NOT A FILE]")
+            continue
+
+        try:
+            text = path.read_text(errors="replace")
+            lines = text.splitlines()
+            if line_range and "-" in line_range:
+                start, end = line_range.split("-", 1)
+                start_idx = max(0, int(start) - 1)
+                end_idx = int(end)
+                lines = lines[start_idx:end_idx]
+            elif line_range:
+                start_idx = max(0, int(line_range) - 1)
+                lines = lines[start_idx:start_idx + 50]
+
+            content = "\n".join(lines)
+            # Truncate very large files
+            if len(content) > 50000:
+                content = content[:50000] + "\n\n[TRUNCATED at 50000 chars]"
+            file_contents.append(f"## {path_str}\n```\n{content}\n```")
+        except Exception as e:
+            file_contents.append(f"## {path_str}\n[READ ERROR: {e}]")
+
+    if not file_contents:
+        return "Error: no valid files to read."
+
+    all_content = "\n\n".join(file_contents)
+
+    system = (
+        "You are a code reading assistant. Read the provided files and return a concise, "
+        "focused summary. Be specific: mention function names, line numbers, key patterns. "
+        "Keep your response SHORT — the goal is to compress information, not reproduce it. "
+        "Use bullet points. No filler."
+    )
+
+    user_msg = f"## Files\n\n{all_content}\n\n"
+    if question:
+        user_msg += f"## Focus Question\n{question}\n\nAnswer focused on this question. Be concise."
+    else:
+        user_msg += "## Task\nProvide a structural summary: key functions, entry points, dependencies, patterns."
+
+    async with httpx.AsyncClient(timeout=90.0) as client:
+        try:
+            resp = await client.post(
+                f"{relay['base_url']}/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {relay['api_key']}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": user_msg},
+                    ],
+                    "max_tokens": max_tokens,
+                    "temperature": 0.2,
+                },
+            )
+            resp.raise_for_status()
+        except (httpx.HTTPStatusError, httpx.ConnectError, httpx.ReadTimeout) as e:
+            return f"Error: {e}"
+
+    data = resp.json()
+    content = data["choices"][0]["message"].get("content", "") or ""
+    usage = data.get("usage", {})
+
+    meta = f"**Model**: {model} | **Files read**: {len(file_contents)} | **Tokens**: {usage.get('prompt_tokens', '?')} in / {usage.get('completion_tokens', '?')} out"
+    return f"{meta}\n\n---\n\n{content}"
+
+
+@mcp.tool()
 async def quick_ask(
     question: str,
     model: str = "",
