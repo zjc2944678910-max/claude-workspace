@@ -84,7 +84,8 @@ See `context/templates/long-task-run.md` for details.
 | L1 with unknown call chain or cross-module risk | worker-delegate (implementer role) |
 | Pre-change risk review needed | Agent subagent (reviewer role) |
 | Unfamiliar codebase exploration | Agent subagent (mapper role) |
-| L2 read-only audit | Claude direct (never delegate) |
+| L2 read-only audit — data collection | worker-delegate (mapper role) |
+| L2 read-only audit — diagnosis/conclusion | Claude direct (never delegate) |
 | L3 state-changing repair | Claude direct (never delegate) |
 | Architecture or safety judgment | Claude direct (never delegate) |
 

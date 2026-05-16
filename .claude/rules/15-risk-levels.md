@@ -23,6 +23,17 @@
 - Substantive tasks: state level + rationale before first action.
 - L0 tiny → L1 escalation triggers: touches multiple modules, shared core logic, API routes, dependency/build/CI behavior, unclear project routing, or any live/production/deploy/auth/secrets surface.
 
+## Delegation at L2/L3
+
+- L2/L3 的**判断和结论**永远不委托 — Claude 自己做诊断、出结论、承担决策责任。
+- L2 中的**只读数据收集子任务**可以委托给 worker（mapper role）：
+  - 读取日志文件并摘要
+  - 扫描代码调用链
+  - 收集配置状态
+  - 格式化证据
+- Worker 返回的原始数据由 Claude 验证后才纳入诊断。
+- L3 的执行步骤不委托 — 每一步需要上下文感知和即时中止能力。
+
 ## Repair Authorization
 
 - L3 tasks require the explicit phrase "进入修复阶段" from the user.

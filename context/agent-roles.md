@@ -62,8 +62,10 @@ Each role has explicit scope boundaries to prevent drift.
 
 ## Delegation Rules
 
-1. Only delegate L0/L1 tasks. Never delegate L2 (read-only audit) or L3 (repair).
-2. Scope must be explicitly bounded before delegation.
-3. Acceptance criteria must be testable.
-4. After delegation returns, Claude verifies the result before accepting.
-5. If worker returns "blocked", do not re-delegate the same scope — escalate or diagnose.
+1. L0/L1 tasks: fully delegatable（实现 + 验证）。
+2. L2 tasks: 只读数据收集子任务可委托（mapper role），诊断/结论由 Claude 出。
+3. L3 tasks: 不委托。每步需上下文感知和即时中止能力。
+4. Scope must be explicitly bounded before delegation.
+5. Acceptance criteria must be testable.
+6. After delegation returns, Claude verifies the result before accepting.
+7. If worker returns "blocked", do not re-delegate the same scope — escalate or diagnose.
