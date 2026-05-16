@@ -1,0 +1,150 @@
+{
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/tools/workspace-guard.py": {
+    "mtime": 1778912622.9694235,
+    "hash": "10ecd57a9109d0dbe1156ab8eb52e893"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/tools/worker-delegate/server.py": {
+    "mtime": 1778913553.540568,
+    "hash": "4ca218d576da7d4c3b96df62c5bf69eb"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/DAILY.md": {
+    "mtime": 1778924692.9969344,
+    "hash": "d27a4834dede96f46235e19694edce47"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/PROJECTS.md": {
+    "mtime": 1778496772.9855008,
+    "hash": "4094cdc150e9a872c8d6d28d13e53f62"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/README.md": {
+    "mtime": 1778747088.8130417,
+    "hash": "a696a3378e8d4cb06ea38d206a97a6c2"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/CLAUDE.md": {
+    "mtime": 1778913599.3226542,
+    "hash": "d89e2fbf6fdc3db3759d4d3230e770c1"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/DECISIONS.md": {
+    "mtime": 1777955042.6560707,
+    "hash": "d756cde490f14f9e030218aed33a4ba9"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/skills-summary.md": {
+    "mtime": 1778496984.2994866,
+    "hash": "5dcb9982aa1dde99655048f12eb5666d"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/README.md": {
+    "mtime": 1778496798.6368968,
+    "hash": "1825eb4e3faf4b634c11f725744f56c0"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/agent-roles.md": {
+    "mtime": 1778913272.885843,
+    "hash": "0ff89a8806fb98cf2af891912de281e9"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/daily-workflow.md": {
+    "mtime": 1778913783.7852397,
+    "hash": "50aad2a5c094fa9ec791d72886710eb1"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/projects/mathorcup-d.md": {
+    "mtime": 1778496762.4183376,
+    "hash": "c5997136333281ecc0a6e04cd0deab55"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/projects/nas-platform.md": {
+    "mtime": 1778496750.74681,
+    "hash": "dab011d8d1733015a63121a91abad027"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/projects/telegram-dual-relay.md": {
+    "mtime": 1778496757.7155282,
+    "hash": "fd3d5c757bf854ea4de26eccca798da2"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/projects/openclaw.md": {
+    "mtime": 1778496744.5917215,
+    "hash": "1991305f9f4cba00545a238790b9d01e"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/runbooks/slow-reply-triage.md": {
+    "mtime": 1777955042.6586866,
+    "hash": "823c13c24b849eeaefe2da4c898fe4c0"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/runbooks/deployment-checklist.md": {
+    "mtime": 1777955042.658801,
+    "hash": "d293f05f48d9119f7877d3ab94a8b9f2"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/runbooks/openclaw-live-audit.md": {
+    "mtime": 1777955042.6584864,
+    "hash": "876321178baac122425dba32db025d42"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/user/default-workspace.md": {
+    "mtime": 1778151634.3386474,
+    "hash": "e0a7820d7c6d993149dfb3e9ca852fe0"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/architecture/openclaw.md": {
+    "mtime": 1777955042.6589427,
+    "hash": "c42f2e6b5e6312cfca22b34301b4812b"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/architecture/workspace-model.md": {
+    "mtime": 1778747037.2369435,
+    "hash": "a4dca0ac4aafffbf7bddcc5c28a1592c"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/templates/project-note.md": {
+    "mtime": 1778496735.2809892,
+    "hash": "d6cda2aac621084fd07b64a71ca0defb"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/templates/audit-report.md": {
+    "mtime": 1777955042.6591907,
+    "hash": "67cbd12f9491939baae0309aabefce14"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/templates/cleanup-manifest.md": {
+    "mtime": 1778747037.2530031,
+    "hash": "40bf6a6a28e456682c415781d7bd6b88"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/templates/repair-plan.md": {
+    "mtime": 1777955042.6593745,
+    "hash": "1949dffc5ddb9101e7b5becdb7d13690"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/context/templates/long-task-run.md": {
+    "mtime": 1778912777.7246366,
+    "hash": "a8dd415c7518a5019235f4321f75aef1"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/inbox/README.md": {
+    "mtime": 1777955042.6595247,
+    "hash": "aeb4f1b487676fd2c7a32e38367feb02"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/archive/README.md": {
+    "mtime": 1777955042.6597443,
+    "hash": "b0752ab11399657f7538d4119c21ba7a"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/archive/old-context/qigate.md": {
+    "mtime": 1777955042.657951,
+    "hash": "9724db58cee264eff3b1ae24598ac628"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/scratch/README.md": {
+    "mtime": 1777955042.6557536,
+    "hash": "c35d234f86ad1127466eef86be442258"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/scratch/plans/7-woolly-perlis.md": {
+    "mtime": 1778924647.444619,
+    "hash": "22b53de3bd87706b413313b680ce261f"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/scratch/plans/stateful-hopping-canyon.md": {
+    "mtime": 1778912506.6297917,
+    "hash": "66390e6723b841232efa16d0404ed9a3"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/registry/projects.md": {
+    "mtime": 1778496786.215205,
+    "hash": "28e26f08768fca4aac17a218e45c87c8"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/registry/paths.md": {
+    "mtime": 1777955042.6575725,
+    "hash": "a04428368e9b17e0af7113942c7b19c8"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/registry/hosts.md": {
+    "mtime": 1777955042.6576924,
+    "hash": "ed5e6296b15a0cbbb34a1b1a4910e192"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/registry/tools.md": {
+    "mtime": 1778747174.387529,
+    "hash": "5e4c894b11029dd117be15a9be3a0a5f"
+  },
+  "/Users/zhangjincheng/Documents/GitHub/claude-workspace/handoffs/README.md": {
+    "mtime": 1777955042.659641,
+    "hash": "cd80347fb3795931caf3abd7579ca8fd"
+  }
+}
