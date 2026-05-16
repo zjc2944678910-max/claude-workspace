@@ -17,3 +17,9 @@ inbox/
 
 # Handoffs (session-specific, regenerated)
 handoffs/
+
+# Python cache
+__pycache__/
+
+# Graphify cache
+graphify-out/cache/
