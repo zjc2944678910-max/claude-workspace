@@ -34,6 +34,19 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "mcp__worker-delegate__delegate_task|mcp__worker-delegate__quick_ask|mcp__worker-delegate__read_and_summarize",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 tools/workspace-guard.py post-tool-use",
+            "timeout": 10,
+            "statusMessage": "Validating delegation output"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [

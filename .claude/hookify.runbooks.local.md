@@ -2,6 +2,7 @@
 name: runbook-reference
 trigger: prompt
 description: Surface relevant runbook when live/audit/deploy keywords detected
+disabled: true
 ---
 
 # Runbook Reference

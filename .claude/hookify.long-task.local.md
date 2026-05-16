@@ -2,6 +2,7 @@
 name: long-task-suggestion
 trigger: prompt
 description: Suggest long-task run directory for multi-step work
+disabled: true
 ---
 
 # Long Task Suggestion
