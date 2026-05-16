@@ -57,7 +57,21 @@ for slug in "${ACTIVE_SLUGS[@]}"; do
   fi
 done
 
-# ── 6. Check for stale retired-project references in active entrypoint docs ──
+# ── 6. Check registry/project-registry.json consistency ─────────────────────
+if [ -f "registry/project-registry.json" ]; then
+  CONFIRMED+=("registry/project-registry.json exists")
+  for slug in "${ACTIVE_SLUGS[@]}"; do
+    if grep -q "\"$slug\"" registry/project-registry.json 2>/dev/null; then
+      CONFIRMED+=("project-registry.json contains slug: $slug")
+    else
+      DRIFT+=("project-registry.json missing slug: $slug")
+    fi
+  done
+else
+  MISSING+=("registry/project-registry.json missing")
+fi
+
+# ── 7. Check for stale retired-project references in active entrypoint docs ──
 ACTIVE_DOCS=(README.md PROJECTS.md CLAUDE.md registry/projects.md registry/tools.md registry/paths.md context/README.md)
 for doc in "${ACTIVE_DOCS[@]}"; do
   if [ -f "$doc" ]; then

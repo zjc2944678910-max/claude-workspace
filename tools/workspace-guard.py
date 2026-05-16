@@ -1,0 +1,275 @@
+#!/usr/bin/env python3
+"""
+workspace-guard.py — Claude Code hook for workspace policy enforcement.
+
+Adapted from codex-workspace workspace_guard.py for Claude Code's hook system.
+Handles: PreToolUse (command classification), UserPromptSubmit (route hints), Stop (closeout).
+
+Usage in .claude/settings.json hooks:
+  command: "/usr/bin/python3 tools/workspace-guard.py <event>"
+  where <event> is: pre-tool-use | user-prompt-submit | stop
+"""
+
+import json
+import os
+import re
+import sys
+import time
+from pathlib import Path
+
+# ── Configuration ────────────────────────────────────────────────────────────
+
+WORKSPACE_ROOT = Path(__file__).resolve().parent.parent
+REGISTRY_PATH = WORKSPACE_ROOT / "registry" / "project-registry.json"
+STATE_DIR = Path.home() / ".claude" / "state"
+STATE_FILE = STATE_DIR / "claude-workspace-hooks.json"
+
+REPAIR_PHRASE = "进入修复阶段"
+REPAIR_TTL_SECONDS = 1800  # 30 minutes
+
+# ── Hard block patterns (immediate deny, never allowed) ──────────────────────
+
+HARD_BLOCK_PATTERNS = [
+    r"\brm\s+(-[a-zA-Z]*r[a-zA-Z]*f|--recursive\s+--force|-[a-zA-Z]*f[a-zA-Z]*r)\b",
+    r"\brm\s+-rf\b",
+    r"\bgit\s+reset\s+--hard\b",
+    r"\bgit\s+clean\s+-[a-zA-Z]*f\b",
+    r"\bgit\s+checkout\s+--\s+\.",
+    r"\bfind\b.*\b-delete\b",
+    r"\bmkfs\b",
+    r"\bdd\s+if=",
+    r"\b(curl|wget)\b.*\|\s*(ba)?sh\b",
+]
+
+# ── L3 block patterns (need repair authorization) ────────────────────────────
+
+L3_BLOCK_PATTERNS = [
+    r"\bsystemctl\s+(restart|stop|start|enable|disable)\b",
+    r"\bservice\s+\S+\s+(restart|stop|start)\b",
+    r"\bdocker\s+compose\s+(down|rm|stop)\b",
+    r"\bdocker\s+(rm|stop|kill)\b",
+    r"\bkubectl\s+(apply|delete|rollout|scale)\b",
+    r"\bhelm\s+(install|upgrade|uninstall|rollback)\b",
+    r"\bterraform\s+(apply|destroy)\b",
+    r"\bansible-playbook\b",
+    r"\bscp\b.*\boc-nas\b",
+    r"\bssh\b.*\boc-nas\b.*\b(rm|mv|cp|systemctl|docker|service)\b",
+]
+
+# ── Live/production terms (emit L2 notice) ───────────────────────────────────
+
+LIVE_TERMS = [
+    "oc-nas", "openclaw", "production", "prod", "live",
+    "deploy", "rollback", "nas-platform",
+]
+
+# ── Inspection commands (always pass, never block) ───────────────────────────
+
+INSPECTION_PREFIXES = [
+    "cat ", "less ", "head ", "tail ", "grep ", "rg ", "ag ", "ack ",
+    "find ", "fd ", "ls ", "tree ", "wc ", "file ", "stat ",
+    "git log", "git status", "git diff", "git show", "git branch",
+    "git remote", "git stash list", "git blame",
+    "echo ", "printf ", "date", "whoami", "hostname", "uname",
+    "python3 -c", "node -e", "jq ", "yq ",
+    "curl -s", "wget -q",
+    "bash tools/workspace-health.sh", "bash tools/workspace-inventory.sh",
+]
+
+
+# ── State management ─────────────────────────────────────────────────────────
+
+def load_state():
+    if STATE_FILE.exists():
+        try:
+            return json.loads(STATE_FILE.read_text())
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {}
+
+
+def save_state(state):
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
+    STATE_FILE.write_text(json.dumps(state, indent=2))
+
+
+def is_repair_authorized():
+    state = load_state()
+    ts = state.get("repair_authorized_at", 0)
+    return (time.time() - ts) < REPAIR_TTL_SECONDS
+
+
+def authorize_repair():
+    state = load_state()
+    state["repair_authorized_at"] = time.time()
+    save_state(state)
+
+
+# ── Registry loading ─────────────────────────────────────────────────────────
+
+def load_registry():
+    if REGISTRY_PATH.exists():
+        try:
+            return json.loads(REGISTRY_PATH.read_text())
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {"projects": []}
+
+
+# ── Command classification ───────────────────────────────────────────────────
+
+def is_inspection_command(cmd):
+    cmd_stripped = cmd.strip()
+    for prefix in INSPECTION_PREFIXES:
+        if cmd_stripped.startswith(prefix):
+            return True
+    return False
+
+
+def classify_command(cmd):
+    """Returns: ('pass', None) | ('hard_block', reason) | ('l3_block', reason) | ('live_notice', msg)"""
+    if is_inspection_command(cmd):
+        return ("pass", None)
+
+    for pattern in HARD_BLOCK_PATTERNS:
+        if re.search(pattern, cmd):
+            return ("hard_block", f"Destructive command blocked: matches pattern `{pattern}`")
+
+    for pattern in L3_BLOCK_PATTERNS:
+        if re.search(pattern, cmd):
+            if is_repair_authorized():
+                return ("pass", None)
+            return ("l3_block", f"L3 state-changing command. User must say \"{REPAIR_PHRASE}\" to authorize.")
+
+    for term in LIVE_TERMS:
+        if term in cmd.lower():
+            return ("live_notice", f"L2 notice: command references live term '{term}'. Ensure read-only intent.")
+
+    return ("pass", None)
+
+
+# ── Hook handlers ────────────────────────────────────────────────────────────
+
+def handle_pre_tool_use():
+    """PreToolUse handler for Bash commands."""
+    try:
+        payload = json.load(sys.stdin)
+    except (json.JSONDecodeError, OSError):
+        return
+
+    tool_input = payload.get("tool_input", payload)
+    cmd = tool_input.get("command", "")
+    if not cmd:
+        return
+
+    classification, message = classify_command(cmd)
+
+    if classification == "hard_block":
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "permissionDecision": "deny",
+                "reason": message
+            }
+        }
+        print(json.dumps(output))
+
+    elif classification == "l3_block":
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "permissionDecision": "deny",
+                "reason": message
+            }
+        }
+        print(json.dumps(output))
+
+    elif classification == "live_notice":
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "additionalContext": message
+            }
+        }
+        print(json.dumps(output))
+
+
+def handle_user_prompt_submit():
+    """UserPromptSubmit handler — emit route hints and detect repair phrase."""
+    try:
+        payload = json.load(sys.stdin)
+    except (json.JSONDecodeError, OSError):
+        return
+
+    user_message = payload.get("user_message", payload.get("content", ""))
+    if not user_message:
+        return
+
+    # Check for repair authorization phrase
+    if REPAIR_PHRASE in user_message:
+        authorize_repair()
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "UserPromptSubmit",
+                "additionalContext": f"L3 repair authorized for {REPAIR_TTL_SECONDS // 60} minutes."
+            }
+        }
+        print(json.dumps(output))
+        return
+
+    # Route hints from registry
+    registry = load_registry()
+    hints = []
+    msg_lower = user_message.lower()
+
+    for project in registry.get("projects", []):
+        keywords = project.get("routing_keywords", [])
+        for kw in keywords:
+            if kw in msg_lower:
+                risk = project.get("risk_profile", "unknown")
+                hints.append(f"Route hint: {project['name']} ({risk})")
+                break
+
+    if hints:
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "UserPromptSubmit",
+                "additionalContext": " | ".join(hints)
+            }
+        }
+        print(json.dumps(output))
+
+
+def handle_stop():
+    """Stop handler — remind about structured closeout for L2/L3 work."""
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "Stop",
+            "additionalContext": "Closeout: if this session involved L2/L3 work, ensure structured output (confirmed facts, risks, next steps)."
+        }
+    }
+    print(json.dumps(output))
+
+
+# ── Main ─────────────────────────────────────────────────────────────────────
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: workspace-guard.py <event>", file=sys.stderr)
+        sys.exit(1)
+
+    event = sys.argv[1]
+
+    if event == "pre-tool-use":
+        handle_pre_tool_use()
+    elif event == "user-prompt-submit":
+        handle_user_prompt_submit()
+    elif event == "stop":
+        handle_stop()
+    else:
+        print(f"Unknown event: {event}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

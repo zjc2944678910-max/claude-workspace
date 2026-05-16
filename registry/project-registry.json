@@ -1,0 +1,64 @@
+{
+  "$schema": "workspace-project-registry/v1",
+  "description": "Machine-readable project registry for claude-workspace hooks and tools.",
+  "updated": "2026-05-16",
+  "projects": [
+    {
+      "slug": "openclaw",
+      "name": "OpenClaw",
+      "kind": "product",
+      "risk_profile": "live_product",
+      "code_roots": [
+        "/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/products/openclaw/nas-openclaw-v22"
+      ],
+      "ops_surface": "/Users/zhangjincheng/Documents/GitHub/codex-workspace/ops/projects/openclaw",
+      "state_data": "/Users/zhangjincheng/Documents/GitHub/codex-workspace/state/project-data/openclaw",
+      "routing_keywords": ["openclaw", "open claw", "benben", "adminai"],
+      "live_host_aliases": ["oc-nas"],
+      "service_names": ["openclaw-gateway", "openclaw-benben"]
+    },
+    {
+      "slug": "nas-platform",
+      "name": "NAS Platform",
+      "kind": "infrastructure",
+      "risk_profile": "live_infra",
+      "code_roots": [
+        "/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/infrastructure/nas-platform"
+      ],
+      "ops_surface": "/Users/zhangjincheng/Documents/GitHub/codex-workspace/ops/projects/nas-platform",
+      "routing_keywords": ["nas-platform", "nas platform", "vps"],
+      "live_host_aliases": ["oc-nas"],
+      "service_names": ["nas-platform"]
+    },
+    {
+      "slug": "telegram-dual-relay",
+      "name": "Telegram Dual Relay",
+      "kind": "infrastructure",
+      "risk_profile": "live_infra",
+      "code_roots": [
+        "/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/infrastructure/telegram-dual-relay"
+      ],
+      "ops_surface": "/Users/zhangjincheng/Documents/GitHub/codex-workspace/ops/projects/telegram-dual-relay",
+      "routing_keywords": ["telegram-dual-relay", "telegram relay", "dual relay"],
+      "live_host_aliases": ["oc-nas"],
+      "service_names": ["telegram-dual-relay"]
+    },
+    {
+      "slug": "mathorcup-d",
+      "name": "MathorCup-D",
+      "kind": "research",
+      "risk_profile": "research_local",
+      "code_roots": [
+        "/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/products/MathorCup_D_repo",
+        "/Users/zhangjincheng/Documents/GitHub/codex-workspace/projects/research/mathorcup_D"
+      ],
+      "ops_surface": "/Users/zhangjincheng/Documents/GitHub/codex-workspace/ops/projects/mathorcup-d",
+      "routing_keywords": ["mathorcup-d", "mathorcup_d", "mathorcup", "mathor"]
+    }
+  ],
+  "risk_profiles": {
+    "live_product": "L2 read-only by default; L3 needs explicit repair phrase.",
+    "live_infra": "L2 read-only unless repair explicitly opened.",
+    "research_local": "Normally L0/L1 unless delivery state changes."
+  }
+}
