@@ -1,0 +1,50 @@
+{
+  "relays": {
+    "new-api": {
+      "base_url": "http://107.175.140.175:3000/v1",
+      "api_key_env": "WORKER_NEW_API_KEY"
+    },
+    "sub2api": {
+      "base_url": "http://107.175.140.175:8080/v1",
+      "api_key_env": "WORKER_SUB2API_KEY"
+    }
+  },
+
+  "tiers": {
+    "default": "mimo-v2.5",
+    "strong": "mimo-v2.5-pro",
+    "complex": "gpt-5.4",
+    "code": "gpt-5.3-codex",
+    "light": "gpt-5.4-mini"
+  },
+
+  "model_routing": {
+    "mimo-v2.5": "new-api",
+    "mimo-v2.5-pro": "new-api",
+    "mimo-v2-pro": "new-api",
+    "mimo-v2-omni": "new-api",
+    "deepseek-v4-flash": "new-api",
+    "deepseek-v4-pro": "new-api",
+    "gpt-5.5": "sub2api",
+    "gpt-5.4": "sub2api",
+    "gpt-5.4-mini": "sub2api",
+    "gpt-5.3-codex": "sub2api",
+    "gpt-5.3-codex-spark": "sub2api",
+    "gpt-5.2": "sub2api"
+  },
+
+  "model_notes": {
+    "mimo-v2.5": "Default worker. Fast, good for daily implementation.",
+    "mimo-v2.5-pro": "Strong worker. Complex implementation and reasoning.",
+    "mimo-v2-pro": "Older MiMo. Fallback if v2.5 unavailable.",
+    "mimo-v2-omni": "Multimodal MiMo. Use when images/vision needed.",
+    "deepseek-v4-flash": "Very fast. Cheap fallback when MiMo subscription expires.",
+    "deepseek-v4-pro": "Strong DeepSeek. Fallback for complex work.",
+    "gpt-5.5": "Strongest GPT. Reserve for hardest tasks.",
+    "gpt-5.4": "Complex tasks. Good reasoning and code.",
+    "gpt-5.4-mini": "Lightweight GPT. Quick cheap tasks.",
+    "gpt-5.3-codex": "Code-specialized. Good for pure code tasks.",
+    "gpt-5.3-codex-spark": "Lightweight Codex. Mechanical code changes.",
+    "gpt-5.2": "Older GPT. General purpose fallback."
+  }
+}

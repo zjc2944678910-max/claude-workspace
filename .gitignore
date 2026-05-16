@@ -3,6 +3,7 @@
 
 # Claude Code local state
 .claude/settings.local.json
+.mcp.json
 .claude/plans/
 .claude/sessions/
 .claude/cache/
