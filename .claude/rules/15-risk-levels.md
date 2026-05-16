@@ -25,14 +25,15 @@
 
 ## Delegation at L2/L3
 
-- L2/L3 的**判断和结论**永远不委托 — Claude 自己做诊断、出结论、承担决策责任。
-- L2 中的**只读数据收集子任务**可以委托给 worker（mapper role）：
-  - 读取日志文件并摘要
+- L2/L3 的**最终判断和结论**永远不委托 — Claude 自己出诊断、承担决策责任。
+- L2 中的**只读数据收集和初步分析**可以委托给 worker：
+  - 读取日志文件并摘要 (read_and_summarize)
   - 扫描代码调用链
   - 收集配置状态
-  - 格式化证据
-- Worker 返回的原始数据由 Claude 验证后才纳入诊断。
-- L3 的执行步骤不委托 — 每一步需要上下文感知和即时中止能力。
+  - 初步数���分析（worker 输出分析，Claude 出结论）
+- Worker 返回的分��由 Claude 验证后才纳入最终诊断。
+- L3 的执行步骤不委托 — worker 无 guard hook 保护，无法中途中止，无 session 上下文。
+- 复杂 L1 设计工作可委托给 hardest tier (gpt-5.5)，Claude 做最终审查和验收。
 
 ## Repair Authorization
 
