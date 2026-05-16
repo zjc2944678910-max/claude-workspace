@@ -17,5 +17,6 @@ Checklist:
 
 Useful checks:
 
-- `bash tools/workspace-health.sh`
-- `bash tools/workspace-inventory.sh`
+- `bash tools/session-audit.sh` — memory freshness, context completeness, scratch hygiene
+- `bash tools/workspace-health.sh` — project registry consistency
+- `bash tools/workspace-inventory.sh` — workspace state overview

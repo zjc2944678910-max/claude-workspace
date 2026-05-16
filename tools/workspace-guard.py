@@ -27,6 +27,30 @@ STATE_FILE = STATE_DIR / "claude-workspace-hooks.json"
 REPAIR_PHRASE = "进入修复阶段"
 REPAIR_TTL_SECONDS = 1800  # 30 minutes
 
+DELEGATION_LOG = WORKSPACE_ROOT / "scratch" / "delegation-log.jsonl"
+
+# ── Long-task signal phrases ────────────────────────────────────────────────
+
+LONG_TASK_SIGNALS = [
+    "multiple files", "cross-module", "cross-repo", "repair loop",
+    "needs_fix", "phase 2", "phase 3", "continuation", "多个文件",
+    "跨模块", "跨仓库", "修复循环", "多步", "multi-step", "multi-slice",
+]
+
+# ── Runbook keyword mapping ─────────────────────────────────────────────────
+
+RUNBOOK_MAP = {
+    "context/runbooks/openclaw-live-audit.md": [
+        "openclaw", "live audit", "oc-nas", "线上检查",
+    ],
+    "context/runbooks/deployment-checklist.md": [
+        "deploy", "部署", "release", "发版",
+    ],
+    "context/runbooks/slow-reply-triage.md": [
+        "slow reply", "timeout", "超时", "响应慢", "performance",
+    ],
+}
+
 # ── Hard block patterns (immediate deny, never allowed) ──────────────────────
 
 HARD_BLOCK_PATTERNS = [
@@ -74,6 +98,7 @@ INSPECTION_PREFIXES = [
     "python3 -c", "node -e", "jq ", "yq ",
     "curl -s", "wget -q",
     "bash tools/workspace-health.sh", "bash tools/workspace-inventory.sh",
+    "bash tools/session-audit.sh",
 ]
 
 
@@ -103,6 +128,23 @@ def authorize_repair():
     state = load_state()
     state["repair_authorized_at"] = time.time()
     save_state(state)
+
+
+def mark_substantive_work():
+    state = load_state()
+    state["substantive_work"] = True
+    save_state(state)
+
+
+def mark_delegation_used():
+    state = load_state()
+    state["delegation_used"] = True
+    save_state(state)
+
+
+def get_session_flags():
+    state = load_state()
+    return state.get("substantive_work", False), state.get("delegation_used", False)
 
 
 # ── Registry loading ─────────────────────────────────────────────────────────
@@ -193,6 +235,10 @@ def handle_pre_tool_use():
         }
         print(json.dumps(output))
 
+    else:
+        if not is_inspection_command(cmd):
+            mark_substantive_work()
+
 
 def handle_user_prompt_submit():
     """UserPromptSubmit handler — emit route hints and detect repair phrase."""
@@ -230,6 +276,21 @@ def handle_user_prompt_submit():
                 hints.append(f"Route hint: {project['name']} ({risk})")
                 break
 
+    # Long-task signal detection (migrated from hookify.long-task.local.md)
+    matched_signals = [s for s in LONG_TASK_SIGNALS if s in msg_lower]
+    if matched_signals:
+        hints.append(
+            f"Long-task signals: {', '.join(matched_signals)}. "
+            "If not in a run directory, consider: bash tools/long-task-init.sh --project <slug> --task \"<goal>\""
+        )
+
+    # Runbook matching (migrated from hookify.runbooks.local.md)
+    for runbook_path, keywords in RUNBOOK_MAP.items():
+        for kw in keywords:
+            if kw in msg_lower:
+                hints.append(f"Runbook available: {runbook_path} — read before acting.")
+                break
+
     if hints:
         output = {
             "hookSpecificOutput": {
@@ -240,12 +301,101 @@ def handle_user_prompt_submit():
         print(json.dumps(output))
 
 
+def handle_post_tool_use():
+    """PostToolUse handler — validate delegation output and log metrics."""
+    try:
+        payload = json.load(sys.stdin)
+    except (json.JSONDecodeError, OSError):
+        return
+
+    tool_name = payload.get("tool_name", "")
+    tool_output = payload.get("tool_output", payload.get("response", ""))
+
+    delegation_tools = {"delegate_task", "quick_ask", "read_and_summarize"}
+    if tool_name not in delegation_tools:
+        return
+
+    mark_delegation_used()
+
+    warnings = []
+    output_str = str(tool_output)
+
+    if tool_name == "delegate_task":
+        expected_sections = ["Understanding", "Implementation", "Verification", "Risk"]
+        missing = [s for s in expected_sections if s.lower() not in output_str.lower()]
+        if missing:
+            warnings.append(f"Worker output may be incomplete — missing sections: {', '.join(missing)}")
+
+    error_indicators = ["Error: relay", "Error: cannot connect", "Error: model", "Connection refused"]
+    for indicator in error_indicators:
+        if indicator.lower() in output_str.lower():
+            warnings.append(f"Worker output contains error: '{indicator}'")
+            break
+
+    # Log to delegation-log.jsonl
+    log_entry = {
+        "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "tool": tool_name,
+        "status": "error" if warnings else "ok",
+        "task_prefix": output_str[:120].replace("\n", " "),
+    }
+
+    # Extract model info if present (worker-delegate includes **Model**: ... header)
+    model_match = re.search(r"\*\*Model\*\*:\s*(\S+)", output_str)
+    if model_match:
+        log_entry["model"] = model_match.group(1)
+
+    tokens_match = re.search(r"\*\*Tokens\*\*:\s*(\d+)\s*/\s*(\d+)", output_str)
+    if tokens_match:
+        log_entry["tokens_in"] = int(tokens_match.group(1))
+        log_entry["tokens_out"] = int(tokens_match.group(2))
+
+    try:
+        DELEGATION_LOG.parent.mkdir(parents=True, exist_ok=True)
+        with open(DELEGATION_LOG, "a") as f:
+            f.write(json.dumps(log_entry) + "\n")
+    except OSError:
+        pass
+
+    if warnings:
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "PostToolUse",
+                "additionalContext": "Delegation review needed: " + " | ".join(warnings)
+                    + ". Verify worker output against acceptance criteria before using."
+            }
+        }
+        print(json.dumps(output))
+
+
 def handle_stop():
-    """Stop handler — remind about structured closeout for L2/L3 work."""
+    """Stop handler — context-aware closeout reminders."""
+    substantive, delegation = get_session_flags()
+
+    parts = []
+
+    if delegation:
+        parts.append(
+            "This session used worker delegation. "
+            "Verify worker output was checked against acceptance criteria."
+        )
+
+    if substantive:
+        parts.append(
+            "Substantive work detected. Before closing: "
+            "(1) Does DECISIONS.md need a new entry? Run /capture-decision. "
+            "(2) Should context/projects/ be updated?"
+        )
+
+    if not parts:
+        parts.append(
+            "Lightweight session. No special closeout needed."
+        )
+
     output = {
         "hookSpecificOutput": {
             "hookEventName": "Stop",
-            "additionalContext": "Closeout: if this session involved L2/L3 work, ensure structured output (confirmed facts, risks, next steps)."
+            "additionalContext": " | ".join(parts)
         }
     }
     print(json.dumps(output))
@@ -264,6 +414,8 @@ def main():
         handle_pre_tool_use()
     elif event == "user-prompt-submit":
         handle_user_prompt_submit()
+    elif event == "post-tool-use":
+        handle_post_tool_use()
     elif event == "stop":
         handle_stop()
     else:
