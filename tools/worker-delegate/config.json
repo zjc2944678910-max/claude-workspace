@@ -26,12 +26,12 @@
     "mimo-v2-omni": "new-api",
     "deepseek-v4-flash": "new-api",
     "deepseek-v4-pro": "new-api",
-    "gpt-5.5": "sub2api",
-    "gpt-5.4": "sub2api",
-    "gpt-5.4-mini": "sub2api",
-    "gpt-5.3-codex": "sub2api",
-    "gpt-5.3-codex-spark": "sub2api",
-    "gpt-5.2": "sub2api"
+    "gpt-5.5": "new-api",
+    "gpt-5.4": "new-api",
+    "gpt-5.4-mini": "new-api",
+    "gpt-5.3-codex": "new-api",
+    "gpt-5.3-codex-spark": "new-api",
+    "gpt-5.2": "new-api"
   },
 
   "model_notes": {
